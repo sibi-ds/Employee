@@ -1,3 +1,6 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -19,6 +22,7 @@ public class EmployeeManagement {
     public static void main(String[] args) {
         int employeeId = 1;    // to track the current key
         byte option = 0;       // to track the command of the user
+        String optionStatement = "1 - Create , 2 - Display all employees , 3 - Update , 4 - Delete , 5 - Exit" ;
 
         EmployeeManagement employeeManagement = new EmployeeManagement();
         Scanner scanner = new Scanner(System.in);
@@ -26,7 +30,7 @@ public class EmployeeManagement {
         System.out.println("select an option to perform a particular operation on an employee's details");
 
         while (5 != option) {
-            System.out.println("1 - Create , 2 - Display all employees , 3 - Update , 4 - Delete , 5 - Exit");
+            System.out.println(optionStatement);
             option = scanner.nextByte();
             scanner.nextLine();
 
@@ -35,23 +39,17 @@ public class EmployeeManagement {
                     employeeManagement.createEmployee(employeeId);
                     employeeId++;
                     break;
-
                 case 2:
                     employeeManagement.displayEmployees();
                     break; 
-
                 case 3:
                     employeeManagement.updateEmployee();
                     break;
-
                 case 4:
-                    System.out.println("Enter employee's ID to delete the employee");
-                    employeeManagement.deleteEmployee(scanner.nextInt());
+                    employeeManagement.deleteEmployee();
                     break;
-
                 case 5:
                     break;
-
                 default:
                     System.out.println("Enter valid option");
             }
@@ -66,22 +64,18 @@ public class EmployeeManagement {
     void createEmployee(int employeeId) {
         System.out.println("Enter employee's details ");
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Name          : ");
+        System.out.print("Name              : ");
         String name = scanner.nextLine();
-        System.out.print("Birth Date    : ");
-        byte birthDate = scanner.nextByte();
-        System.out.print("Birth Month   : ");
-        byte birthMonth = scanner.nextByte();
-        System.out.print("Birth Year    : ");
-        short birthYear = scanner.nextShort();
-        System.out.print("Salary        : ");
+        System.out.print("DOB (DD/MM/YYYY)  : ");
+        String dob = validateDate();
+        System.out.print("Salary            : ");
         float salary = scanner.nextFloat();
         scanner.nextLine();
-        System.out.print("Mobile Number : ");
-        String mobileNumber = String.valueOf(scanner.nextLong());
-                
+        System.out.print("Mobile Number     : ");
+        String mobileNumber = validateMobileNumber();
+
         employees.put(employeeId
-                , new Employee(employeeId, name, birthDate, birthMonth, birthYear, salary, mobileNumber));
+                , new Employee(employeeId, name, dob, salary, mobileNumber));
         System.out.println("Employee details stored successfully");
     }
 
@@ -94,9 +88,7 @@ public class EmployeeManagement {
         employees.forEach((employeeId, employeeDetails) -> {
             System.out.println("ID     : " + employeeDetails.getId()
                     + "\nNAME   : " + employeeDetails.getName()
-                    + "\nDOB    : " + employeeDetails.getBirthDate() + " - "
-                                    + employeeDetails.getBirthMonth() + " - "
-                                    + employeeDetails.getBirthYear()
+                    + "\nDOB    : " + employeeDetails.getDob()
                     + "\nSALARY : " + employeeDetails.getSalary() + " INR"
                     + "\nMOBILE : " + employeeDetails.getMobileNumber() + "\n");
         });
@@ -113,54 +105,47 @@ public class EmployeeManagement {
 
         if (!employees.containsKey(employeeId)) {
             System.out.println("Employee details not present");
-            return;
-        }
+        } else {
+            System.out.println("Choose which detail need to be updated");
+            char option = '\0';
 
-        System.out.println("Choose which detail need to be updated");
+            while ('C' != option) {
+                System.out.println("N - Name , D - DOB , S - Salary , M - Mobile number , C - Cancel Updation");
+                char updationParameter = scanner.next().charAt(0);
+                scanner.nextLine();
 
-        while (true) {
-            System.out.println("N - Name , D - DOB , S - Salary , M - Mobile number , C - Cancel Updation");
-            char updationParameter = scanner.next().charAt(0);
-            scanner.nextLine();
-
-            switch (updationParameter) {
-                case 'N':
-                    System.out.println("Enter updated NAME");
-                    employees.get(employeeId).setName(scanner.nextLine());
-                    System.out.println("Updation Successful");
-                    break;
-
-                case 'D':
-                    System.out.println("Enter updated DOB in DD , MM , YYYY order");
-                    employees.get(employeeId).setBirthDate(scanner.nextByte());
-                    employees.get(employeeId).setBirthMonth(scanner.nextByte());
-                    employees.get(employeeId).setBirthYear(scanner.nextShort());
-                    System.out.println("Updation Successful");
-                    scanner.nextLine();
-                    break;
-
-                case 'S':
-                    System.out.println("Enter SALARY");
-                    employees.get(employeeId).setSalary(scanner.nextFloat());
-                    System.out.println("Updation Successful");
-                    scanner.nextLine();
-                    break;
-
-                case 'M':
-                    System.out.println("Enter updated MOBILE NUMBER");
-                    employees.get(employeeId).setMobileNumber(scanner.next());
-                    System.out.println("Updation Successful");
-                    break;
-
-                case 'C':
-                    System.out.println("Updation cancelled");
-                    return;
-
-                default:
-                    System.out.println("Enter valid option");
-                    break;
+                switch (updationParameter) {
+                    case 'N':
+                        System.out.println("Enter updated NAME");
+                        employees.get(employeeId).setName(scanner.nextLine());
+                        System.out.println("Updation Successful");
+                        break;
+                    case 'D':
+                        System.out.println("Enter updated DOB in DD , MM , YYYY order");
+                        employees.get(employeeId).setDob(validateDate());
+                        System.out.println("Updation Successful");
+                        scanner.nextLine();
+                        break;
+                    case 'S':
+                        System.out.println("Enter updated SALARY");
+                        employees.get(employeeId).setSalary(scanner.nextFloat());
+                        System.out.println("Updation Successful");
+                        scanner.nextLine();
+                        break;
+                    case 'M':
+                        System.out.println("Enter updated MOBILE NUMBER");
+                        employees.get(employeeId).setMobileNumber(validateMobileNumber());
+                        System.out.println("Updation Successful");
+                        break;
+                    case 'C':
+                        System.out.println("Updation cancelled");
+                        option = 'C';
+                        break;
+                    default:
+                        System.out.println("Enter valid option");
+                        break;
+                }
             }
-
         }
 
     }
@@ -168,17 +153,47 @@ public class EmployeeManagement {
     /*
      * get employee ID from the user and
      * deletes all the details of the employee
-     *
-     * @param employeeId    refers the certain employee's details
      */
-    void deleteEmployee(int employeeId) {
+    void deleteEmployee() {
+        System.out.println("Enter employee's ID to delete the employee");
+        Scanner scanner = new Scanner(System.in);
+        int employeeId = scanner.nextInt();
+
         if (!employees.containsKey(employeeId)) {
             System.out.println("Employee details not present");
-            return;
+        } else {
+            employees.remove(employeeId);
+            System.out.println("Deletion Successful");
         }
-
-        employees.remove(employeeId);
-        System.out.println("Deletion Successful");
     }
 
-} 
+    String validateMobileNumber() {
+        Scanner scanner = new Scanner(System.in);
+        String mobileNumber = scanner.next();
+        if (!mobileNumber.matches("[1-9][0-9]{9}")) {
+            System.out.println("Enter valid mobile number");
+            validateMobileNumber();
+        }
+        return mobileNumber;
+    }
+
+    String validateDate() {
+        Scanner scanner = new Scanner(System.in);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        
+        String date = scanner.next();
+
+        try {
+            return dateFormat.format(dateFormat.parse(date));
+        } catch (ParseException exception) {
+            System.out.println("Enter valid date format");
+            return validateDate();
+        }
+        
+    }
+
+}
+
+
+
+

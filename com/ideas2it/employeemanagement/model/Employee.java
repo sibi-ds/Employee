@@ -11,21 +11,17 @@ public class Employee {
 
     private int employeeId;
     private String employeeName;
-    private byte employeeBirthDate;
-    private byte employeeBirthMonth;
-    private short employeeBirthYear;
+    private String employeeDob;
     private float employeeSalary;
     private String employeeMobileNumber;
 
     private Employee() {
     }
 
-    public Employee(int id, String name, byte date, byte month, short year, float salary, String mobileNumber) {
+    public Employee(int id, String name, String dob, float salary, String mobileNumber) {
         this.employeeId = id;
         this.employeeName = name;
-        this.employeeBirthDate = date;
-        this.employeeBirthMonth = month;
-        this.employeeBirthYear = year;
+        this.employeeDob = dob;
         this.employeeSalary = salary;
         this.employeeMobileNumber = mobileNumber;
     }
@@ -38,16 +34,8 @@ public class Employee {
         this.employeeName = name;
     }
     
-    public void setBirthDate(byte date) {
-        this.employeeBirthDate = date;
-    }
-
-    public void setBirthMonth(byte month) {
-        this.employeeBirthMonth = month;
-    }
-
-    public void setBirthYear(short year) {
-        this.employeeBirthYear = year;
+    public void setDob(String date) {
+        this.employeeDob = date;
     }
 
     public void setSalary(float salary) {
@@ -66,16 +54,8 @@ public class Employee {
         return employeeName;
     }
 
-    public byte getBirthDate() {
-        return employeeBirthDate;
-    }
-
-    public byte getBirthMonth() {
-        return employeeBirthMonth;
-    }
-
-    public short getBirthYear() {
-        return employeeBirthYear;
+    public String getDob() {
+        return employeeDob;
     }
 
     public float getSalary() {
