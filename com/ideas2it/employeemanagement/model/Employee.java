@@ -1,5 +1,8 @@
 package com.ideas2it.employeemanagement.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * POJO class used to create object of employee that contains
  * Name , DOB , Salary and Mobile Number
@@ -11,14 +14,14 @@ public class Employee {
 
     private int employeeId;
     private String employeeName;
-    private String employeeDob;
+    private Date employeeDob;
     private float employeeSalary;
     private String employeeMobileNumber;
 
     private Employee() {
     }
 
-    public Employee(int id, String name, String dob, float salary, String mobileNumber) {
+    public Employee(int id, String name, Date dob, float salary, String mobileNumber) {
         this.employeeId = id;
         this.employeeName = name;
         this.employeeDob = dob;
@@ -34,7 +37,7 @@ public class Employee {
         this.employeeName = name;
     }
     
-    public void setDob(String date) {
+    public void setDob(Date date) {
         this.employeeDob = date;
     }
 
@@ -54,7 +57,7 @@ public class Employee {
         return employeeName;
     }
 
-    public String getDob() {
+    public Date getDob() {
         return employeeDob;
     }
 
@@ -64,6 +67,14 @@ public class Employee {
 
     public String getMobileNumber() {
         return employeeMobileNumber;
+    }
+
+    public String toString() {
+        return "ID            : " + employeeId
+               + "\nNAME          : " + employeeName
+               + "\nDOB           : " + new SimpleDateFormat("dd/MM/yyyy").format(employeeDob)
+               + "\nSALARY        : " + employeeSalary
+               + "\nMOBILE NUMBER : " + employeeMobileNumber + "\n" ;
     }
 
 }
