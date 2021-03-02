@@ -22,15 +22,15 @@ public class EmployeeManagement {
     public static void main(String[] args) {
         int employeeId = 1;    // to track the current key
         byte option = 0;       // to track the command of the user
-        String optionStatement
-                = "1 - Create , 2 - Display all employees , 3 - Update , 4 - Delete , 5 - Exit" ;
+        String optionStatement = "1 - Create , 2 - Display all employees ,"
+                + " 3 - Display an employee , 4 - Update , 5 - Delete , 6 - Exit" ;
 
         EmployeeManagement employeeManagement = new EmployeeManagement();
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("select an option to perform a particular operation on an employee's details");
 
-        while (5 != option) {
+        while (6 != option) {
             System.out.println(optionStatement);
             option = scanner.nextByte();
             scanner.skip("[\n\r]{2}");
@@ -42,14 +42,17 @@ public class EmployeeManagement {
                     break;
                 case 2:
                     employeeManagement.displayEmployees();
-                    break; 
+                    break;
                 case 3:
-                    employeeManagement.updateEmployee();
+                    employeeManagement.displayEmployee();
                     break;
                 case 4:
-                    employeeManagement.deleteEmployee();
+                    employeeManagement.updateEmployee();
                     break;
                 case 5:
+                    employeeManagement.deleteEmployee();
+                    break;
+                case 6:
                     break;
                 default:
                     System.out.println("Enter valid option");
@@ -86,8 +89,24 @@ public class EmployeeManagement {
     private void displayEmployees() {
         System.out.println("\n******** Employees Database ********\n");
         employees.forEach((employeeId, employeeDetails) -> {
-            System.out.println(employeeDetails.toString());
+            System.out.println(employeeDetails);
         });
+    }
+
+    /*
+     * display details of an employee
+     */
+    private void displayEmployee() {
+        System.out.println("Enter employee ID to be displayed : ");
+        
+        Scanner scanner = new Scanner(System.in);
+        int employeeId = scanner.nextInt();
+
+        if (!employees.containsKey(employeeId)) {
+            System.out.println("Employee details not present");
+        } else {
+            System.out.println(employees.get(employeeId));
+        }
     }
 
     /*
@@ -106,7 +125,6 @@ public class EmployeeManagement {
 
             System.out.println("Choose which detail need to be updated");
             char option = '\0';
-
             String updationOptionStatement
                     = "N - Name , D - DOB , S - Salary , M - Mobile number , C - Cancel Updation";
 
@@ -166,16 +184,22 @@ public class EmployeeManagement {
         }
     }
 
+    /*
+     * the mobile number is validated using regex
+     */
     private String validateMobileNumber() {
         Scanner scanner = new Scanner(System.in);
         String mobileNumber = scanner.next();
         if (!mobileNumber.matches("[1-9][0-9]{9}")) {
             System.out.println("Enter valid mobile number");
-            validateMobileNumber();
+            return validateMobileNumber();
         }
         return mobileNumber;
     }
 
+    /*
+     * the date is validated using parsing and exception handling
+     */
     private Date validateDate() {
         Scanner scanner = new Scanner(System.in);
 
